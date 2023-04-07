@@ -11,7 +11,7 @@ const sellPoint=async (coin)=>{
         let bucketlist=[];
         let optimizedSellPoint ;
         for(i=0;i<data.length;i++){
-          
+   
             if(data[i][1]>data[i][4]){
                 redCandleCount++;                
             }else{
@@ -22,13 +22,13 @@ const sellPoint=async (coin)=>{
                 redCandleCount=0;
             }
         } 
-
+        
         if(bucketlist.length % 2 !==0){     
             median=bucketlist[Math.floor(bucketlist.length/2)];
         }else{
             median=(bucketlist[Math.floor(bucketlist.length/2)]+bucketlist[Math.floor(((bucketlist.length-1)/2))])/2;
         }
-        
+
         optimizedSellPoint = (data[data.length-1][4] * (1-(median/100)))
         console.log(optimizedSellPoint);
         return optimizedSellPoint;
