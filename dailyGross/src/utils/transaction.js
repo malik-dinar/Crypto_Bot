@@ -6,7 +6,7 @@ exports.buyCoins = async (name, quantity, price) => {
     quantity,
     price,
     isBought: true,
-    date: new Date().getDate(),
+    date: new Date().toISOString().split('T')[0]
   });
 };
 
@@ -16,6 +16,6 @@ exports.sellCoins = async (name, quantity, price) => {
     quantity,
     price,
     isBought: false,
-    date: new Date().getDate(),
+    date: new Date().toISOString().split('T')[0]
   });
 };

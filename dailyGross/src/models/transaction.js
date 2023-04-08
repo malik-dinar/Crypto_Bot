@@ -18,7 +18,7 @@ const transactionSchema = mongoose.Schema(
         type:Boolean
     },
     date:{
-        type: Number,
+        type: String,
         required: true
     }
   },

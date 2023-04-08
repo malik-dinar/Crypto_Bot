@@ -10,6 +10,7 @@ function identifyBuyPoints(symbol,quantity) {
   ws.on("message", async(data) => {
     const { k } = JSON.parse(data);
     buyCoins(symbol,quantity,k.c)
+    console.log(`successfully buyed ${quantity} ${symbol}`);
     ws.close();
   });
 }
