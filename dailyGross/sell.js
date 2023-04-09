@@ -1,4 +1,4 @@
-const WebSocket = require("ws");
+const axios = require("axios");
 const connectDb = require("./src/config/dbConnection");
 const {
   getBoughtQuantity,
@@ -9,10 +9,12 @@ const { sellCoins } = require("./src/utils/transaction");
 connectDb();
 
 function identifyBuyPoints(symbol, quantity) {
-  const ws = new WebSocket(
-    `wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@kline_1m`
-  );
-  ws.on("message", async (data) => {
+  axios
+  .get(
+    `https://api.binance.com/api/v3/ticker/price?symbol=${symbol.toUpperCase()}`
+  ).
+  then(async (data) => {
+    const currentPrice = data.data.price;
     const coinAvailable = await checkCoin(symbol);
     if (!coinAvailable) {
       console.log("user doesnot have this coin to sell");
@@ -21,15 +23,14 @@ function identifyBuyPoints(symbol, quantity) {
     const bougthQuantity = await getBoughtQuantity(symbol);
     const sellQuantity = await getSellQuantity(symbol);
 
+    console.log(bougthQuantity  , sellQuantity);
+
     if ( bougthQuantity > quantity && bougthQuantity - sellQuantity > 0) {
-      const { k } = JSON.parse(data);
-      sellCoins(symbol, quantity, k.c);
-      ws.close();
+      sellCoins(symbol, quantity, currentPrice );
     } else {
       console.log("coin not buyed  / exceeded quantity");
-      ws.close();
     }
   });
 }
 
-identifyBuyPoints("bnbusdt",29);
+identifyBuyPoints("bnbusdt",1);

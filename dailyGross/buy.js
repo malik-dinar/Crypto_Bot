@@ -1,18 +1,18 @@
-const WebSocket = require("ws");
+const axios = require("axios");
 const connectDb = require("./src/config/dbConnection");
 const { buyCoins } = require("./src/utils/transaction");
-connectDb()
+connectDb();
 
-function identifyBuyPoints(symbol,quantity) {
-  const ws = new WebSocket(
-    `wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@kline_1m`
-  );
-  ws.on("message", async(data) => {
-    const { k } = JSON.parse(data);
-    buyCoins(symbol,quantity,k.c)
-    console.log(`successfully buyed ${quantity} ${symbol}`);
-    ws.close();
-  });
+function identifyBuyPoints(symbol, quantity) {
+  axios
+    .get(
+      `https://api.binance.com/api/v3/ticker/price?symbol=${symbol.toUpperCase()}`
+    )
+    .then(async (data) => {
+      const currentPrice = data.data.price;
+      buyCoins(symbol, quantity, currentPrice);
+      console.log(`successfully buyed ${quantity} ${symbol}`);
+    });
 }
 
-identifyBuyPoints("bnbusdt",7);
+identifyBuyPoints("bnbusdt", 7);

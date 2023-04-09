@@ -37,7 +37,11 @@ const dailyGross =async (coin) => {
           if(dailyGross>0){
             console.log(currentPrice);
             console.log(`profit = ${dailyGross}`);
+          }else if(dailyGross===0){
+            console.log(currentPrice);
+             console.log('No profit and no loss as of now');
           }else{
+            console.log(currentPrice);
             console.log(`loss = ${dailyGross}`);
           }
         })
