@@ -1,9 +1,10 @@
 const WebSocket = require("ws");
 const { sendMail } = require("./utils/mailService");
+require('dotenv').config();
 
 function identifyBuyPoints(symbol) {
   const ws = new WebSocket(
-    `wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@kline_1h`
+    `${process.env.BUY_POINT_URL}${symbol.toLowerCase()}@kline_1h`
   );
   let redCandlesCount = 0;
   ws.on("message", (data) => {

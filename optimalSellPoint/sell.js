@@ -1,8 +1,9 @@
-
 const axios = require('axios');
 const { sort } = require('./utils/insertionSort');
+require('dotenv').config();
+
 const sellPoint=async (coin)=>{
-    axios.get(`https://api.binance.com/api/v3/klines?symbol=${coin.toUpperCase()}&interval=1h&limit=1000`)
+    axios.get(`${process.env.OPTIMAL_SELL_POINT_URL}${coin.toUpperCase()}&interval=1h&limit=1000`)
     .then(response => {
         let redCandleCount=0;
         let data = response.data;
@@ -11,7 +12,6 @@ const sellPoint=async (coin)=>{
         let bucketlist=[];
         let optimizedSellPoint ;
         for(i=0;i<data.length;i++){
-   
             if(data[i][1]>data[i][4]){
                 redCandleCount++;                
             }else{
@@ -37,4 +37,4 @@ const sellPoint=async (coin)=>{
        console.error('error')
     });
   }
-  sellPoint('btcusdt')
+  sellPoint('bnbusdt')

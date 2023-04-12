@@ -6,50 +6,41 @@ const {
 } = require("./src/utils/transactionInfo");
 const connectDb = require("./src/config/dbConnection");
 const { sumOfAnArray } = require("./src/utils/helpers");
+require("dotenv").config();
 connectDb();
 
-const dailyGross =async (coin) => {
-    const coinAvailable = await checkCoin(coin);
-    if(coinAvailable){
-        axios
-        .get(
-          `https://api.binance.com/api/v3/ticker/price?symbol=${coin.toUpperCase()}`
-        )
-        .then(async (response) => {  
-          const currentPrice = response.data.price;
-          const buyedDatas = await getBuyedDatas();
-          const selledDatas = await getSelledDatas();
+const dailyGross = async (coin) => {
+  const coinAvailable = await checkCoin(coin);
+  if (!coinAvailable) {
+    return console.log("You dont have this coin to check the profit");
+  }
 
-          const divIndex = selledDatas.length;
-          const selledCoinsInsideBuyedDatas = buyedDatas.splice(0, divIndex);
-          const unSelledCoinsInsideBuyedDatas = buyedDatas;
-          const quantity=unSelledCoinsInsideBuyedDatas.length
-    
-          const buyedPrice = sumOfAnArray(selledCoinsInsideBuyedDatas);
-          const selledPrice = sumOfAnArray(selledDatas);
-          const sumOfcurrentlyAvailableCoins = sumOfAnArray(unSelledCoinsInsideBuyedDatas);
-        
-          const profit1 = selledPrice-buyedPrice; 
-          const profit2 = (currentPrice*quantity) - sumOfcurrentlyAvailableCoins;
+  axios
+    .get(`${process.env.CURRENT_PRICE_URL}${coin.toUpperCase()}`)
+    .then(async (response) => {
+      const currentPrice = response.data.price;
+      const buyedDatas = await getBuyedDatas();
+      const selledDatas = await getSelledDatas();
 
-          const dailyGross = profit1 + profit2;
+      const soldCoinsWithinPurchasedCoins = buyedDatas.splice(0,selledDatas.length);
+      const unsoldCoinsWithinPurchasedCoins = buyedDatas;
 
-          if(dailyGross>0){
-            console.log(currentPrice);
-            console.log(`profit = ${dailyGross}`);
-          }else if(dailyGross===0){
-            console.log(currentPrice);
-             console.log('No profit and no loss as of now');
-          }else{
-            console.log(currentPrice);
-            console.log(`loss = ${dailyGross}`);
-          }
-        })
-        .catch((error) => {
-          console.error("error");
-        });   
-    }else{
-        console.log('You dont have this coin to check the price');
-    }
+      const profit1 = sumOfAnArray(selledDatas) - sumOfAnArray(soldCoinsWithinPurchasedCoins);
+      const profit2 = currentPrice * unsoldCoinsWithinPurchasedCoins.length - sumOfAnArray(unsoldCoinsWithinPurchasedCoins);
+
+      const dailyGross = profit1 + profit2;
+
+      console.log(currentPrice);
+      if (dailyGross > 0) {
+        console.log(`profit = ${dailyGross}`);
+      } else if (dailyGross === 0) {
+        console.log("No profit and no loss as of now");
+      } else {
+        console.log(`loss = ${dailyGross}`);
+      }
+    })
+    .catch((error) => {
+      console.error("error");
+    });
 };
 dailyGross("bnbusdt");
