@@ -1,9 +1,9 @@
 const nodemailer = require("nodemailer");
 require('dotenv').config();
 
-exports.sendMail = async (symbol, redCandlesCount) => {
+exports.sendMail = async (coin, redCandlesCount) => {
   try {
-    const message = `Buy ${symbol} now! It has witnessed ${redCandlesCount} continuous red hourly candles.`;
+    const message = `Buy ${coin} now! It has witnessed ${redCandlesCount} continuous red hourly candles.`;
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -15,7 +15,7 @@ exports.sendMail = async (symbol, redCandlesCount) => {
     const mailOptions = {
       from: "malik@gmail.com",
       to: "malikdinaras@gmail.com",
-      subject: `${symbol} Buy Alert`,
+      subject: `${coin} Buy Alert`,
       text: message,
     };
 

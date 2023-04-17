@@ -2,9 +2,10 @@ const WebSocket = require("ws");
 const { sendMail } = require("./utils/mailService");
 require('dotenv').config();
 
-function identifyBuyPoints(symbol) {
+const identifyBuyPoints=(req,res)=> {
+  const { coin } = req.params;
   const ws = new WebSocket(
-    `${process.env.BUY_POINT_URL}${symbol.toLowerCase()}@kline_1h`
+    `${process.env.BUY_POINT_URL}${coin.toLowerCase()}@kline_1h`
   );
   let redCandlesCount = 0;
   ws.on("message", (data) => {
@@ -12,7 +13,8 @@ function identifyBuyPoints(symbol) {
     if (candle.o > candle.c) {
       redCandlesCount++;
       if (redCandlesCount >= 5) {
-        sendMail(symbol, redCandlesCount);
+        sendMail(coin, redCandlesCount);
+        res.send({ message: `Buy ${coin} now! It has witnessed ${redCandlesCount} continuous red hourly candles.` })
         redCandlesCount = 0;
         ws.close();
       }
@@ -22,4 +24,6 @@ function identifyBuyPoints(symbol) {
   });
 }
 
-identifyBuyPoints("bnbusdt");
+module.exports ={ identifyBuyPoints }
+
+

@@ -2,7 +2,8 @@ const axios = require('axios');
 const { sort } = require('./utils/insertionSort');
 require('dotenv').config();
 
-const sellPoint=async (coin)=>{
+const sellPoint=async (req,res)=>{
+    const { coin } = req.params;
     axios.get(`${process.env.OPTIMAL_SELL_POINT_URL}${coin.toUpperCase()}&interval=1h&limit=1000`)
     .then(response => {
         let redCandleCount=0;
@@ -31,10 +32,12 @@ const sellPoint=async (coin)=>{
 
         optimizedSellPoint = (data[data.length-1][4] * (1-(median/100)))
         console.log(optimizedSellPoint);
-        return optimizedSellPoint;
+
+        res.send({ message: `${optimizedSellPoint}`})
     })
     .catch(error => {
        console.error('error')
     });
-  }
-  sellPoint('bnbusdt')
+}
+
+module.exports = { sellPoint }

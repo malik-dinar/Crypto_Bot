@@ -1,5 +1,3 @@
-
-
 exports.sumOfAnArray = (array)=>{
     if(array.length==0) return 0;
     

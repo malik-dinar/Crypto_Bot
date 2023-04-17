@@ -4,12 +4,12 @@ const {
   getSelledDatas,
   checkCoin,
 } = require("./src/utils/transactionInfo");
-const connectDb = require("./src/config/dbConnection");
 const { sumOfAnArray } = require("./src/utils/helpers");
 require("dotenv").config();
-connectDb();
 
-const dailyGross = async (coin) => {
+const dailyGross = async (req,res) => {
+  const { coin } = req.params;
+  console.log(coin);
   const coinAvailable = await checkCoin(coin);
   if (!coinAvailable) {
     return console.log("You dont have this coin to check the profit");
@@ -43,4 +43,5 @@ const dailyGross = async (coin) => {
       console.error("error");
     });
 };
-dailyGross("bnbusdt");
+
+module.exports = { dailyGross }
